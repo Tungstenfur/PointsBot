@@ -1,0 +1,5 @@
+﻿/bin
+/.idea
+/obj/Debug
+/obj/Release
+/obj/rider.*

@@ -1,0 +1,22 @@
+{
+  "version": 2,
+  "dgSpecHash": "E+co51RZSuU=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\koszu\\RiderProjects\\silly-kronos\\silly-kronos.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\koszu\\.nuget\\packages\\microsoft.extensions.configuration\\10.0.0-rc.1.25451.107\\microsoft.extensions.configuration.10.0.0-rc.1.25451.107.nupkg.sha512",
+    "C:\\Users\\koszu\\.nuget\\packages\\microsoft.extensions.configuration.abstractions\\10.0.0-rc.1.25451.107\\microsoft.extensions.configuration.abstractions.10.0.0-rc.1.25451.107.nupkg.sha512",
+    "C:\\Users\\koszu\\.nuget\\packages\\microsoft.extensions.configuration.fileextensions\\10.0.0-rc.1.25451.107\\microsoft.extensions.configuration.fileextensions.10.0.0-rc.1.25451.107.nupkg.sha512",
+    "C:\\Users\\koszu\\.nuget\\packages\\microsoft.extensions.configuration.json\\10.0.0-rc.1.25451.107\\microsoft.extensions.configuration.json.10.0.0-rc.1.25451.107.nupkg.sha512",
+    "C:\\Users\\koszu\\.nuget\\packages\\microsoft.extensions.fileproviders.abstractions\\10.0.0-rc.1.25451.107\\microsoft.extensions.fileproviders.abstractions.10.0.0-rc.1.25451.107.nupkg.sha512",
+    "C:\\Users\\koszu\\.nuget\\packages\\microsoft.extensions.fileproviders.physical\\10.0.0-rc.1.25451.107\\microsoft.extensions.fileproviders.physical.10.0.0-rc.1.25451.107.nupkg.sha512",
+    "C:\\Users\\koszu\\.nuget\\packages\\microsoft.extensions.filesystemglobbing\\10.0.0-rc.1.25451.107\\microsoft.extensions.filesystemglobbing.10.0.0-rc.1.25451.107.nupkg.sha512",
+    "C:\\Users\\koszu\\.nuget\\packages\\microsoft.extensions.primitives\\10.0.0-rc.1.25451.107\\microsoft.extensions.primitives.10.0.0-rc.1.25451.107.nupkg.sha512",
+    "C:\\Users\\koszu\\.nuget\\packages\\netcord\\1.0.0-alpha.428\\netcord.1.0.0-alpha.428.nupkg.sha512",
+    "C:\\Users\\koszu\\.nuget\\packages\\netcord.services\\1.0.0-alpha.428\\netcord.services.1.0.0-alpha.428.nupkg.sha512",
+    "C:\\Users\\koszu\\.nuget\\packages\\system.io.pipelines\\10.0.0-rc.1.25451.107\\system.io.pipelines.10.0.0-rc.1.25451.107.nupkg.sha512",
+    "C:\\Users\\koszu\\.nuget\\packages\\system.text.encodings.web\\10.0.0-rc.1.25451.107\\system.text.encodings.web.10.0.0-rc.1.25451.107.nupkg.sha512",
+    "C:\\Users\\koszu\\.nuget\\packages\\system.text.json\\10.0.0-rc.1.25451.107\\system.text.json.10.0.0-rc.1.25451.107.nupkg.sha512"
+  ],
+  "logs": []
+}
