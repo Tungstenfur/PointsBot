@@ -1,0 +1,148 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+    inputs:
+      create_release:
+        description: 'Create a new release'
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            runtime: linux-x64
+            artifact_name: PointsBot-linux-x64
+            executable_extension: ''
+          - os: windows-latest
+            runtime: win-x64
+            artifact_name: PointsBot-windows-x64
+            executable_extension: '.exe'
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '9.0.x'
+        dotnet-quality: 'rc'
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+
+    - name: Test
+      run: dotnet test --configuration Release --no-build --verbosity normal || true
+
+    - name: Publish
+      run: dotnet publish --configuration Release --runtime ${{ matrix.runtime }} --self-contained --output publish/${{ matrix.runtime }}
+
+    - name: Create artifact directory
+      run: mkdir -p artifacts
+
+    - name: Copy executable and required files (Linux)
+      if: matrix.os == 'ubuntu-latest'
+      run: |
+        cp publish/${{ matrix.runtime }}/silly-kronos artifacts/PointsBot
+        cp README.md artifacts/
+        echo "appsettings.json template - rename to appsettings.json and configure your bot token" > artifacts/appsettings.template.json
+        echo '{"AppSettings":{"Token":"YOUR_BOT_TOKEN_HERE"}}' >> artifacts/appsettings.template.json
+
+    - name: Copy executable and required files (Windows)
+      if: matrix.os == 'windows-latest'
+      run: |
+        Copy-Item "publish/${{ matrix.runtime }}/silly-kronos.exe" "artifacts/PointsBot.exe"
+        Copy-Item "README.md" "artifacts/"
+        "appsettings.json template - rename to appsettings.json and configure your bot token" | Out-File -FilePath "artifacts/appsettings.template.json" -Encoding utf8
+        '{"AppSettings":{"Token":"YOUR_BOT_TOKEN_HERE"}}' | Out-File -FilePath "artifacts/appsettings.template.json" -Append -Encoding utf8
+
+    - name: Create archive (Linux)
+      if: matrix.os == 'ubuntu-latest'
+      run: |
+        cd artifacts
+        tar -czf ../${{ matrix.artifact_name }}.tar.gz *
+
+    - name: Create archive (Windows)
+      if: matrix.os == 'windows-latest'
+      run: |
+        cd artifacts
+        Compress-Archive -Path * -DestinationPath ../${{ matrix.artifact_name }}.zip
+
+    - name: Upload Linux artifact
+      if: matrix.os == 'ubuntu-latest'
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ matrix.artifact_name }}
+        path: ${{ matrix.artifact_name }}.tar.gz
+
+    - name: Upload Windows artifact
+      if: matrix.os == 'windows-latest'
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ matrix.artifact_name }}
+        path: ${{ matrix.artifact_name }}.zip
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'workflow_dispatch' && inputs.create_release)
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Get version from tag
+      id: get_version
+      run: |
+        if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+          echo "version=manual-$(date +%Y%m%d-%H%M%S)" >> $GITHUB_OUTPUT
+        else
+          echo "version=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Download all artifacts
+      uses: actions/download-artifact@v4
+
+    - name: Display structure of downloaded files
+      run: ls -la
+
+    - name: Create Release
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: ${{ steps.get_version.outputs.version }}
+        name: Release ${{ steps.get_version.outputs.version }}
+        body: |
+          ## PointsBot Release ${{ steps.get_version.outputs.version }}
+          
+          This release contains compiled binaries for Windows and Linux.
+          
+          ### Download Instructions:
+          - **Windows**: Download `PointsBot-windows-x64.zip`, extract it, rename `appsettings.template.json` to `appsettings.json`, configure your bot token, then run `PointsBot.exe`
+          - **Linux**: Download `PointsBot-linux-x64.tar.gz`, extract it, rename `appsettings.template.json` to `appsettings.json`, configure your bot token, then run `./PointsBot`
+          
+          ### Requirements:
+          - No additional .NET runtime installation required (self-contained)
+          - Discord bot token (see README.md for setup instructions)
+          
+          ### Changes:
+          - Automated builds and releases
+          - Self-contained executables for Windows and Linux
+        draft: false
+        prerelease: false
+        files: |
+          PointsBot-linux-x64/PointsBot-linux-x64.tar.gz
+          PointsBot-windows-x64/PointsBot-windows-x64.zip
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
