@@ -41,3 +41,5 @@ If you prefer to build from source, you'll need:
 - .NET 9.0 SDK
 - Run `dotnet build` or `dotnet publish` for your target platform
 
+beautiful bot PFP made by Ms. Ranch
+
