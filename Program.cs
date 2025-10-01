@@ -5,6 +5,9 @@ using NetCord.Rest;
 using NetCord.Services;
 using NetCord.Services.ApplicationCommands;
 using Microsoft.Extensions.Configuration;
+using silly_kronos;
+
+if (!db.dbOpen()) return;
 if (!File.Exists("appsettings.json")) throw new Exception("appsettings.json file not found. Refer to the README.md for more information.");
 var config = new ConfigurationBuilder()
     .SetBasePath(Directory.GetCurrentDirectory()) 
