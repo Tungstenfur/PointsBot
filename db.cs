@@ -67,4 +67,39 @@ internal static class db
             return false;
         }
     }
+    public static int[] getPoints(ulong guildId, ulong userId)
+    {
+        try
+        {
+            using var cmd = _conn.CreateCommand();
+            cmd.CommandText = $"PRAGMA table_info(guild_{guildId})";
+            using var reader = cmd.ExecuteReader();
+
+            var columns = new List<string>();
+            while (reader.Read())
+            {
+                string columnName = reader.GetString(1);
+                if (columnName != "userId")
+                    columns.Add(columnName);
+            }
+
+            var points = new int[columns.Count];
+            for (int i = 0; i < columns.Count; i++)
+            {
+                cmd.CommandText = $"SELECT {columns[i]} FROM guild_{guildId} WHERE userId = @userId";
+                cmd.Parameters.Clear();
+                cmd.Parameters.AddWithValue("@userId", userId.ToString());
+
+                object result = cmd.ExecuteScalar();
+                points[i] = result != DBNull.Value ? Convert.ToInt32(result) : 0;
+            }
+
+            return points;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error retrieving points for user {userId} in guild {guildId}: {ex.Message}");
+            return Array.Empty<int>();
+        }
+    }
 }

@@ -6,7 +6,7 @@ namespace silly_kronos;
 
 public class pointsModule:ApplicationCommandModule<ApplicationCommandContext>
 {
-    [SlashCommand("init", "Initialize points system for this server")]
+    [SlashCommand("init", "Initialize points system for this server", DefaultGuildPermissions = Permissions.Administrator)]
     public Task InitAsync()
     {
         ulong guildId = Context.Interaction.GuildId ?? throw new Exception("This command can only be used in a server.");
@@ -33,7 +33,7 @@ public class pointsModule:ApplicationCommandModule<ApplicationCommandContext>
         return Context.Interaction.SendResponseAsync(InteractionCallback.Message(props));
     }
     
-    [SlashCommand("addpoints", "Add points to a user")]
+    [SlashCommand("addpoints", "Add points to a user", DefaultGuildPermissions = Permissions.Administrator)]
     public Task AddPointsAsync(
         [SlashCommandParameter(Description = "The user to add points to")] User user,
         [SlashCommandParameter(Description = "The amount of points to add")] int points,
@@ -48,6 +48,20 @@ public class pointsModule:ApplicationCommandModule<ApplicationCommandContext>
         var props = new InteractionMessageProperties
         {
             Content = $"Successfully added {points} points to {user}.",
+        };
+        return Context.Interaction.SendResponseAsync(InteractionCallback.Message(props));
+    }
+    [SlashCommand("mypoints", "Check your points")]
+    public Task MyPointsAsync()
+    {
+        ulong guildId = Context.Interaction.GuildId ?? throw new Exception("This command can only be used in a server.");
+        ulong userId = Context.Interaction.User.Id;
+        int[] points = db.getPoints(guildId, userId);
+        string split = string.Join("\n", points.Select((p, i) => $"Table {i + 1}: {p} points"));
+        var props = new InteractionMessageProperties
+        {
+            Content = $"You have {points} points.",
+            Flags = MessageFlags.Ephemeral
         };
         return Context.Interaction.SendResponseAsync(InteractionCallback.Message(props));
     }
