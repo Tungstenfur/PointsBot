@@ -46,12 +46,12 @@ public class ModModule:ApplicationCommandModule<ApplicationCommandContext>
         if (OperatingSystem.IsLinux())
         {
             files= Directory.GetFiles(Directory.GetCurrentDirectory() + "/moths/");
-            fs = File.OpenRead(Directory.GetCurrentDirectory()+"/"+ files[Random.Shared.Next(files.Length)]);
+            fs = File.OpenRead(files[Random.Shared.Next(files.Length)]);
         }
         else if (OperatingSystem.IsWindows())
         {
             files= Directory.GetFiles(Directory.GetCurrentDirectory() + "\\moths\\");
-            fs = File.OpenRead(Directory.GetCurrentDirectory()+"\\"+ files[Random.Shared.Next(files.Length)]);
+            fs = File.OpenRead(files[Random.Shared.Next(files.Length)]);
         }
         else
             throw new Exception("why");
