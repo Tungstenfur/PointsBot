@@ -22,6 +22,82 @@
       <Content Include="moths\moth1.png">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
+      <None Remove="moths\moth2.jpg" />
+      <Content Include="moths\moth2.jpg">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <None Remove="moths\moth3.jpg" />
+      <Content Include="moths\moth3.jpg">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <None Remove="moths\moth4.png" />
+      <Content Include="moths\moth4.png">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <None Remove="moths\moth5.png" />
+      <Content Include="moths\moth5.png">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <None Remove="moths\moth6.jpg" />
+      <Content Include="moths\moth6.jpg">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <None Remove="moths\moth7.jpg" />
+      <Content Include="moths\moth7.jpg">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <None Remove="moths\moth8.jpg" />
+      <Content Include="moths\moth8.jpg">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <None Remove="moths\moth9.png" />
+      <Content Include="moths\moth9.png">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <None Remove="moths\moth10.png" />
+      <Content Include="moths\moth10.png">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <None Remove="moths\moth11.png" />
+      <Content Include="moths\moth11.png">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <None Remove="moths\moth12.png" />
+      <Content Include="moths\moth12.png">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <None Remove="moths\moth13.jpg" />
+      <Content Include="moths\moth13.jpg">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <None Remove="moths\moth14.png" />
+      <Content Include="moths\moth14.png">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <None Remove="moths\moth15.png" />
+      <Content Include="moths\moth15.png">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <None Remove="moths\moth16.jpg" />
+      <Content Include="moths\moth16.jpg">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <None Remove="moths\moth17.png" />
+      <Content Include="moths\moth17.png">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <None Remove="moths\moth18.png" />
+      <Content Include="moths\moth18.png">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <None Remove="moths\moth19.jpg" />
+      <Content Include="moths\moth19.jpg">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <None Remove="moths\moth20.png" />
+      <Content Include="moths\moth20.png">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
     </ItemGroup>
 
 </Project>
