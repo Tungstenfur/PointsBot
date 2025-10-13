@@ -17,4 +17,11 @@
       <PackageReference Include="NetCord.Services" Version="1.0.0-alpha.428" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Remove="moths\moth1.png" />
+      <Content Include="moths\moth1.png">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+
 </Project>
