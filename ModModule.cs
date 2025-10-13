@@ -38,4 +38,32 @@ public class ModModule:ApplicationCommandModule<ApplicationCommandContext>
         var props = new RestRequestProperties().WithAuditLogReason(reason);
         await member.TimeOutAsync(time, props);
     }
+    [SlashCommand("moth","Returns a moth" )]
+    public Task MothAsync()
+    {
+        string[] files;
+        FileStream fs;
+        if (OperatingSystem.IsLinux())
+        {
+            files= Directory.GetFiles(Directory.GetCurrentDirectory() + "/moths/");
+            fs = File.OpenRead(Directory.GetCurrentDirectory()+"/"+ files[Random.Shared.Next(files.Length)]);
+        }
+        else if (OperatingSystem.IsWindows())
+        {
+            files= Directory.GetFiles(Directory.GetCurrentDirectory() + "\\moths\\");
+            fs = File.OpenRead(Directory.GetCurrentDirectory()+"\\"+ files[Random.Shared.Next(files.Length)]);
+        }
+        else
+            throw new Exception("why");
+        var attachment = new AttachmentProperties("moth.png", fs)
+            .WithTitle("Moth!");
+        var embed = new EmbedProperties()
+        {
+            Title = "Moth!",
+            Image = "attachment://moth.png"
+        };
+        var props = new InteractionMessageProperties()
+            .AddEmbeds(embed).AddAttachments(attachment);
+        return Context.Interaction.SendResponseAsync(InteractionCallback.Message(props));
+    }
 }
