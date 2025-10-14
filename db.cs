@@ -40,19 +40,38 @@ internal static class db
 
     public static bool addColumn(ulong guildId)
     {
-        //Create points and pending poitns columns if they don't exist
         try
         {
-            using var cmd = _conn.CreateCommand(); 
-            cmd.CommandText = $"ALTER TABLE guild_{guildId} ADD COLUMN IF NOT EXISTS points INTEGER DEFAULT 0"; //Add points column if it doesn't exist
+            using var cmd = _conn.CreateCommand();
+
+            // Check if the column 'points' exists
+            cmd.CommandText = $"PRAGMA table_info(guild_{guildId})";
+            using (var reader = cmd.ExecuteReader())
+            {
+                bool pointsColumnExists = false;
+                bool pointsPendingColumnExists = false;
+
+                while (reader.Read())
+                {
+                    string columnName = reader.GetString(1); // Column name is in the second column of PRAGMA table_info
+                    if (columnName == "points")
+                        pointsColumnExists = true;
+                    if (columnName == "points_pending")
+                        pointsPendingColumnExists = true;
+                }
+            } // Reader is disposed here
+
+            // Add 'points' column if it doesn't exist
+            cmd.CommandText = $"ALTER TABLE guild_{guildId} ADD COLUMN points INTEGER DEFAULT 0";
             cmd.ExecuteNonQuery();
 
-            cmd.CommandText = $"ALTER TABLE guild_{guildId} ADD COLUMN IF NOT EXISTS points_pending INTEGER DEFAULT 0"; //Add pending points column if it doesn't exist
+            // Add 'points_pending' column if it doesn't exist
+            cmd.CommandText = $"ALTER TABLE guild_{guildId} ADD COLUMN points_pending INTEGER DEFAULT 0";
             cmd.ExecuteNonQuery();
 
             return true;
         }
-        catch (Exception ex) //Catch any errors
+        catch (Exception ex)
         {
             Console.WriteLine($"Error adding columns to table for guild {guildId}: {ex.Message}");
             return false;
