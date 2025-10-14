@@ -1,105 +1,103 @@
-﻿using Microsoft.Data.Sqlite;
+﻿//Made by lord_sinister (tungsten) under PolyForm Noncommercial License 1.0.0
+using Microsoft.Data.Sqlite;
 
 namespace silly_kronos;
 
 internal static class db
 {
-    private static SqliteConnection _conn;
+    private static SqliteConnection _conn; //Database connection
 
-    public static bool dbOpen()
+    public static bool dbOpen() //Open connection to the database
     {
         try
         {
-            _conn = new SqliteConnection("Data Source=pointsbot.db");
-            _conn.Open();
-            return true;
+            _conn = new SqliteConnection("Data Source=pointsbot.db"); //Database file
+            _conn.Open(); //Open
+            return true; //It worked!
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error opening database: {ex.Message}");
-            return false;
+            Console.WriteLine($"Error opening database: {ex.Message}"); 
+            return false; //Throw scary error
         }
     }
-    public static bool addTable(ulong guildId)
+    public static bool addTable(ulong guildId) //Create table for guild if it doesn't exist
     {
         try
         {
-            using var cmd = _conn.CreateCommand();
-            cmd.CommandText = $"CREATE TABLE IF NOT EXISTS guild_{guildId} (userId TEXT PRIMARY KEY)";
-            cmd.ExecuteNonQuery();
-            return true;
+            using var cmd = _conn.CreateCommand(); 
+            //TODO: IMPORTANT: ALTER CURRENT TABLES TO USE VARCHAR(20)
+            cmd.CommandText = $"CREATE TABLE IF NOT EXISTS guild_{guildId} (userId VARCHAR(20) PRIMARY KEY NOT NULL)"; //Create table with userId as primary key (I hate null and discord ids) (maybe i shoulve used varchar?), changed. IMPORTANT: ALTER CURRENT TABLES TO USE VARCHAR(20)
+            cmd.ExecuteNonQuery(); 
+            return true; 
         }
-        catch (Exception ex)
+        catch (Exception ex) //Catch any errors
         {
             Console.WriteLine($"Error creating table for guild {guildId}: {ex.Message}");
             return false;
         }
     }
-    public static bool addColumn(ulong guildId, string columnName)
+
+    public static bool addColumn(ulong guildId)
     {
+        //Create points and pending poitns columns if they don't exist
         try
         {
-            using var cmd = _conn.CreateCommand();
-            cmd.CommandText = $"ALTER TABLE guild_{guildId} ADD COLUMN {columnName} INTEGER DEFAULT 0";
+            using var cmd = _conn.CreateCommand(); 
+            cmd.CommandText = $"ALTER TABLE guild_{guildId} ADD COLUMN IF NOT EXISTS points INTEGER DEFAULT 0"; //Add points column if it doesn't exist
             cmd.ExecuteNonQuery();
+
+            cmd.CommandText = $"ALTER TABLE guild_{guildId} ADD COLUMN IF NOT EXISTS points_pending INTEGER DEFAULT 0"; //Add pending points column if it doesn't exist
+            cmd.ExecuteNonQuery();
+
             return true;
         }
-        catch (Exception ex)
+        catch (Exception ex) //Catch any errors
         {
-            Console.WriteLine($"Error adding column {columnName} to table for guild {guildId}: {ex.Message}");
+            Console.WriteLine($"Error adding columns to table for guild {guildId}: {ex.Message}");
             return false;
         }
     }
-    public static bool addPoints(ulong guildId, ulong userId, int points, string table = "points")
+    public static bool addPoints(ulong guildId, ulong userId, int points) //Add points to a user
     {
         try
         {
+            const string table = "points"; //Table to add points to
             using var cmd = _conn.CreateCommand();
-            cmd.CommandText = $"INSERT INTO guild_{guildId} (userId, {table}) VALUES (@userId, @points) ON CONFLICT(userId) DO UPDATE SET {table} = {table} + @points";
-            cmd.Parameters.AddWithValue("@userId", userId.ToString());
-            cmd.Parameters.AddWithValue("@points", points);
+            cmd.CommandText = $"INSERT INTO guild_{guildId} (userId, {table}) VALUES (@userId, @points) ON CONFLICT(userId) DO UPDATE SET {table} = {table} + @points"; //Insert user if they don't exist, otherwise update their points
+            cmd.Parameters.AddWithValue("@userId", userId.ToString()); //Using string for userId to avoid issues with large numbers
+            cmd.Parameters.AddWithValue("@points", points); //Points to add
             cmd.ExecuteNonQuery();
             return true;
         }
-        catch (Exception ex)
+        catch (Exception ex) //Catch any errors
         {
             Console.WriteLine($"Error adding points to user {userId} in guild {guildId}: {ex.Message}");
             return false;
         }
     }
-    public static int[] getPoints(ulong guildId, ulong userId)
+    public static string getPoints(ulong guildId, ulong userId) //Get points for a user
     {
         try
         {
             using var cmd = _conn.CreateCommand();
-            cmd.CommandText = $"PRAGMA table_info(guild_{guildId})";
-            using var reader = cmd.ExecuteReader();
-
-            var columns = new List<string>();
-            while (reader.Read())
+            cmd.CommandText = $"SELECT points, points_pending FROM guild_{guildId} WHERE userId = @userId"; //Select points and pending points for user
+            cmd.Parameters.AddWithValue("@userId", userId.ToString()); //Using string for userId to avoid issues with large numbers
+            using var reader = cmd.ExecuteReader(); //
+            if (reader.Read()) //Return points if user exists
             {
-                string columnName = reader.GetString(1);
-                if (columnName != "userId")
-                    columns.Add(columnName);
+                int points, pendingPoints;
+                points = reader.GetInt32(0);
+                pendingPoints = reader.GetInt32(1);
+                return points.ToString() +'('+ pendingPoints.ToString() +')';
             }
-
-            var points = new int[columns.Count];
-            for (int i = 0; i < columns.Count; i++)
-            {
-                cmd.CommandText = $"SELECT {columns[i]} FROM guild_{guildId} WHERE userId = @userId";
-                cmd.Parameters.Clear();
-                cmd.Parameters.AddWithValue("@userId", userId.ToString());
-
-                object result = cmd.ExecuteScalar();
-                points[i] = result != DBNull.Value ? Convert.ToInt32(result) : 0;
-            }
-
-            return points;
+            return "Reading the database failed. You might not exist"; //User doesn't exist
+            
         }
-        catch (Exception ex)
+        catch (Exception ex) //error handling
         {
             Console.WriteLine($"Error retrieving points for user {userId} in guild {guildId}: {ex.Message}");
-            return Array.Empty<int>();
+            return "Error retrieving points.";
         }
     }
 }

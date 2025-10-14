@@ -13,7 +13,7 @@ This is a bot used to manage a point system in a Discord server. It allows users
 ## Usage
 ### Hosting your own
 #### Requirements
-- **No .NET runtime required** - Self-contained executables are provided for Windows and Linux
+- **No .NET runtime required** - Self-contained executables are provided for Windows and Linux (not yet)
 
 #### Setup
 1. **Download the latest release** from the [Releases page](https://github.com/Tungstenfur/PointsBot/releases)
@@ -40,6 +40,4 @@ This is a bot used to manage a point system in a Discord server. It allows users
 If you prefer to build from source, you'll need:
 - .NET 9.0 SDK
 - Run `dotnet build` or `dotnet publish` for your target platform
-
-beautiful bot PFP made by Ms. Ranch
 
