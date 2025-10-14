@@ -50,6 +50,12 @@ public class ModModule:ApplicationCommandModule<ApplicationCommandContext> //All
         var time = DateTimeOffset.UtcNow.AddMinutes(durationMinutes); //Calculating the time to set the timeout until
         var props = new RestRequestProperties().WithAuditLogReason(reason); 
         await member.TimeOutAsync(time, props); //Timing out the user
+        //Responding to the command
+        var responseProps = new InteractionMessageProperties
+        {
+            Content = $"Timed out {user} for {durationMinutes} minutes.",
+        };
+        await Context.Interaction.SendResponseAsync(InteractionCallback.Message(responseProps));
     }
     [SlashCommand("moth","Returns a moth" )] //Command to return a random moth image from the moths folder (very important)
     public Task MothAsync()
