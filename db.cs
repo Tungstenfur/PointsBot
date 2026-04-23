@@ -1,5 +1,4 @@
-﻿//Made by lord_sinister (tungsten) under PolyForm Noncommercial License 1.0.0
-using Microsoft.Data.Sqlite;
+﻿using Microsoft.Data.Sqlite;
 
 namespace silly_kronos;
 
@@ -7,7 +6,7 @@ internal static class db
 {
     private static SqliteConnection _conn; //Database connection
 
-    public static bool dbOpen() //Open connection to the database
+    internal static bool dbOpen() //Open connection to the database
     {
         try
         {
@@ -21,7 +20,7 @@ internal static class db
             return false; //Throw scary error
         }
     }
-    public static bool addTable(ulong guildId) //Create table for guild if it doesn't exist
+    internal static bool addTable(ulong guildId) //Create table for guild if it doesn't exist
     {
         try
         {
@@ -38,7 +37,7 @@ internal static class db
         }
     }
 
-    public static bool addColumn(ulong guildId)
+    internal static bool addColumn(ulong guildId)
     {
         try
         {
@@ -77,11 +76,10 @@ internal static class db
             return false;
         }
     }
-    public static bool addPoints(ulong guildId, ulong userId, int points) //Add points to a user
+    internal static bool addPoints(ulong guildId, ulong userId, int points,string table="points") //Add points to a user
     {
         try
         {
-            const string table = "points"; //Table to add points to
             using var cmd = _conn.CreateCommand();
             cmd.CommandText = $"INSERT INTO guild_{guildId} (userId, {table}) VALUES (@userId, @points) ON CONFLICT(userId) DO UPDATE SET {table} = {table} + @points"; //Insert user if they don't exist, otherwise update their points
             cmd.Parameters.AddWithValue("@userId", userId.ToString()); //Using string for userId to avoid issues with large numbers
@@ -95,7 +93,7 @@ internal static class db
             return false;
         }
     }
-    public static string getPoints(ulong guildId, ulong userId) //Get points for a user
+    internal static string getPoints(ulong guildId, ulong userId) //Get points for a user
     {
         try
         {
@@ -117,6 +115,23 @@ internal static class db
         {
             Console.WriteLine($"Error retrieving points for user {userId} in guild {guildId}: {ex.Message}");
             return "Error retrieving points.";
+        }
+    }
+
+    internal static bool syncPendingToMain(ulong guildId,ulong userId)
+    {
+        try
+        {
+            using var cmd = _conn.CreateCommand();
+            cmd.CommandText = $"UPDATE guild_{guildId} SET points = points + points_pending, points_pending = 0 WHERE userId = @userId"; //Add pending points to main points and reset pending points to 0
+            cmd.Parameters.AddWithValue("@userId", userId.ToString()); //Using string for userId to avoid issues with large numbers
+            cmd.ExecuteNonQuery();
+            return true;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error syncing pending points for user {userId} in guild {guildId}: {ex.Message}");
+            return false;
         }
     }
 }

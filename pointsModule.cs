@@ -1,8 +1,9 @@
-﻿//Made by lord_sinister (tungsten) under PolyForm Noncommercial License 1.0.0
-using NetCord;
+﻿using NetCord;
 using NetCord.JsonModels;
 using NetCord.Services.ApplicationCommands;
 using NetCord.Rest;
+using NetCord.Services.ComponentInteractions;
+
 namespace silly_kronos;
 
 public class pointsModule:ApplicationCommandModule<ApplicationCommandContext> //Allows commands registration from modules
@@ -36,14 +37,45 @@ public class pointsModule:ApplicationCommandModule<ApplicationCommandContext> //
     {
         ulong guildId = Context.Interaction.GuildId ?? throw new Exception("This command can only be used in a server.");
         ulong userId = user.Id;
+        if (points < 0)
+            return Context.Interaction.SendResponseAsync(InteractionCallback.Message(new InteractionMessageProperties
+            {
+                Content = "You cannot give negative points",
+                Flags = MessageFlags.Ephemeral
+            }));
         if (!db.addPoints(guildId, userId, points)) return Context.Interaction.SendResponseAsync(InteractionCallback.Message(new InteractionMessageProperties
         {
-            Content = "Failed to add points to the user.",
+            Content = "Failed to add points to the user, you might need to /init the database.",
             Flags = MessageFlags.Ephemeral
         }));
         var props = new InteractionMessageProperties
         {
             Content = $"Added {points} points to {user}.",
+            Flags = MessageFlags.Ephemeral
+        };
+        return Context.Interaction.SendResponseAsync(InteractionCallback.Message(props));
+    }
+    [SlashCommand("addpendingpoints", "Add points to a user", DefaultGuildPermissions = Permissions.ManageEvents)]
+    public Task AddPendingPointsAsync(
+        [SlashCommandParameter(Description = "The user to add points to")] User user,
+        [SlashCommandParameter(Description = "The amount of points to add")] int points)
+    {
+        ulong guildId = Context.Interaction.GuildId ?? throw new Exception("This command can only be used in a server.");
+        ulong userId = user.Id;
+        if (points < 0)
+            return Context.Interaction.SendResponseAsync(InteractionCallback.Message(new InteractionMessageProperties
+            {
+                Content = "You cannot give negative points",
+                Flags = MessageFlags.Ephemeral
+            }));
+        if (!db.addPoints(guildId, userId, points,"points_pending")) return Context.Interaction.SendResponseAsync(InteractionCallback.Message(new InteractionMessageProperties
+        {
+            Content = "Failed to add points to the user, you might need to /init the database.",
+            Flags = MessageFlags.Ephemeral
+        }));
+        var props = new InteractionMessageProperties
+        {
+            Content = $"Added {points} pending points to {user}.",
             Flags = MessageFlags.Ephemeral
         };
         return Context.Interaction.SendResponseAsync(InteractionCallback.Message(props));
@@ -57,6 +89,25 @@ public class pointsModule:ApplicationCommandModule<ApplicationCommandContext> //
         var props = new InteractionMessageProperties
         {
             Content = $"You have {points} points.",
+            Flags = MessageFlags.Ephemeral
+        };
+        return Context.Interaction.SendResponseAsync(InteractionCallback.Message(props));
+    }
+    [SlashCommand("syncpoints", "Sync pending points to main points for a user", DefaultGuildPermissions = Permissions.ManageEvents)]
+    public Task SyncPoints(
+        [SlashCommandParameter(Description = "The user to syncs points for")]
+        User user)
+    {
+        ulong guildId = Context.Interaction.GuildId ?? throw new Exception("This command can only be used in a server.");
+        ulong userId = Context.Interaction.User.Id;
+        if (!db.syncPendingToMain(guildId, userId)) return Context.Interaction.SendResponseAsync(InteractionCallback.Message(new InteractionMessageProperties
+        {
+            Content = "Failed to sync points, you might need to /init the database.",
+            Flags = MessageFlags.Ephemeral
+        }));
+        var props = new InteractionMessageProperties
+        {
+            Content = $"Synced pending points to main points for {user}.",
             Flags = MessageFlags.Ephemeral
         };
         return Context.Interaction.SendResponseAsync(InteractionCallback.Message(props));

@@ -1,5 +1,4 @@
-﻿//Made by lord_sinister (tungsten) under PolyForm Noncommercial License 1.0.0
-using NetCord;
+﻿using NetCord;
 using NetCord.Gateway;
 using NetCord.Logging;
 using NetCord.Rest;

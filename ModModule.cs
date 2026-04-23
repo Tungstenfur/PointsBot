@@ -1,5 +1,4 @@
-﻿//Made by lord_sinister (tungsten) under PolyForm Noncommercial License 1.0.0
-using NetCord.Services.ApplicationCommands;
+﻿using NetCord.Services.ApplicationCommands;
 using NetCord;
 using NetCord.Rest;
 namespace silly_kronos;

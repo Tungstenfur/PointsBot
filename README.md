@@ -38,6 +38,6 @@ This is a bot used to manage a point system in a Discord server. It allows users
 
 #### Building from source
 If you prefer to build from source, you'll need:
-- .NET 9.0 SDK
+- .NET 10.0 SDK
 - Run `dotnet build` or `dotnet publish` for your target platform
 
