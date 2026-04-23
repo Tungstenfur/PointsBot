@@ -108,9 +108,9 @@ internal static class db
                 int points, pendingPoints;
                 points = reader.GetInt32(0);
                 pendingPoints = reader.GetInt32(1);
-                return points.ToString() +'('+ pendingPoints.ToString() +')';
+                return points.ToString() +" points and "+ pendingPoints.ToString() +" pending points";
             }
-            return "Reading the database failed. You might not exist"; //User doesn't exist
+            return "You dont have any points!"; //User doesn't exist
             
         }
         catch (Exception ex) //error handling

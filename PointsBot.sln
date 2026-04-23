@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "silly-kronos", "silly-kronos.csproj", "{798DA4FD-E72F-4724-A9D7-043DD0D245F0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PointsBot", "PointsBot.csproj", "{798DA4FD-E72F-4724-A9D7-043DD0D245F0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
